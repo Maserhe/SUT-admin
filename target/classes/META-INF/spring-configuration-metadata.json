@@ -1,0 +1,28 @@
+{
+  "groups": [
+    {
+      "name": "maserhe.jwt",
+      "type": "top.maserhe.util.JwtUtils",
+      "sourceType": "top.maserhe.util.JwtUtils"
+    }
+  ],
+  "properties": [
+    {
+      "name": "maserhe.jwt.expire",
+      "type": "java.lang.Long",
+      "sourceType": "top.maserhe.util.JwtUtils",
+      "defaultValue": 0
+    },
+    {
+      "name": "maserhe.jwt.header",
+      "type": "java.lang.String",
+      "sourceType": "top.maserhe.util.JwtUtils"
+    },
+    {
+      "name": "maserhe.jwt.secret",
+      "type": "java.lang.String",
+      "sourceType": "top.maserhe.util.JwtUtils"
+    }
+  ],
+  "hints": []
+}
