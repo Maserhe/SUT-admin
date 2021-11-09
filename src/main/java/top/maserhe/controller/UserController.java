@@ -121,6 +121,14 @@ public class UserController {
         return Result.succ(users);
     }
 
+    @GetMapping("/delete")
+    public Result deleteStu(Integer id) {
+
+        boolean res = userService.removeById(id);
+        return Result.succ(res);
+
+    }
+
     /**
      * 快速构建 用户
      * @param username

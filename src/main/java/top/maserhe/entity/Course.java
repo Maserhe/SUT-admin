@@ -25,7 +25,9 @@ public class Course implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    private Integer title;
+    private Integer classId;
+
+    private String title;
 
     private String img;
 
@@ -33,6 +35,9 @@ public class Course implements Serializable {
      * 课程说明
      */
     private String description;
+
+
+
 
 
 }
