@@ -9,12 +9,14 @@ import org.springframework.web.bind.annotation.*;
 
 import top.maserhe.common.dto.CourseDto;
 import top.maserhe.common.lang.Result;
+import top.maserhe.common.vo.CourseVo;
 import top.maserhe.entity.Course;
+import top.maserhe.entity.User;
 import top.maserhe.service.CourseService;
+import top.maserhe.service.UserService;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -31,6 +33,9 @@ public class CourseController {
     @Autowired
     private CourseService courseService;
 
+    @Autowired
+    private UserService userService;
+
     /**
      * 通过 classId 获取所有课程
      * @param classId
@@ -41,8 +46,15 @@ public class CourseController {
         Assert.notNull(classId, "班级号为空");
         Map<String, Object> map = new HashMap<>(1);
         map.put("class_id", classId);
-        final Collection<Course> courses = courseService.listByMap(map);
-        return Result.succ(courses);
+
+        final List<Course> courses = courseService.listByMap(map).stream().collect(Collectors.toList());
+        final List<CourseVo> ans = courses.stream().map(t -> {
+            CourseVo temp = new CourseVo();
+            BeanUtil.copyProperties(t, temp);
+            temp.setTeacherName(userService.getById(t.getTeacherId()).getName());
+            return temp;
+        }).collect(Collectors.toList());
+        return Result.succ(ans);
     }
 
     /**
@@ -57,6 +69,7 @@ public class CourseController {
         BeanUtil.copyProperties(courseDto, course);
         boolean save = courseService.save(course);
         return Result.succ(save);
+
     }
 
     @PostMapping("/delete")
@@ -64,6 +77,10 @@ public class CourseController {
         final boolean res = courseService.removeById(courseId);
         return Result.succ(res);
     }
+
+
+
+
 
 
 }

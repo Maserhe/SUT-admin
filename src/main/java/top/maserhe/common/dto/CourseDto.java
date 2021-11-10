@@ -27,4 +27,7 @@ public class CourseDto {
      * 课程 描述
      */
     private String description;
+
+    private Integer teacherId;
+
 }
