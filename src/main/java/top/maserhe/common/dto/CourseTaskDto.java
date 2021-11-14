@@ -1,42 +1,31 @@
-package top.maserhe.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import java.time.LocalDateTime;
-import java.io.Serializable;
+package top.maserhe.common.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
 /**
- * <p>
- * 
- * </p>
+ * Description:
  *
- * @author Maserhe
- * @since 2021-11-01
- */
+ * @author maserhe
+ * @date 2021/11/14 3:36 下午
+ **/
 @Data
-@EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
-public class CourseTask implements Serializable {
+public class CourseTaskDto {
 
-    private static final long serialVersionUID = 1L;
-
-    @TableId(value = "id", type = IdType.AUTO)
-    private Integer id;
 
     private Integer courseId;
 
+    @NotBlank(message = "作业标题不能为空")
     private String taskName;
 
     /**
      * 作业描述
      */
+    @NotBlank(message = "作业描述不能为空")
     private String description;
 
     /**
@@ -57,6 +46,5 @@ public class CourseTask implements Serializable {
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime stopTime;
-
 
 }
