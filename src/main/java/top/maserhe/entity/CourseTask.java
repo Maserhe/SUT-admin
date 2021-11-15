@@ -51,7 +51,6 @@ public class CourseTask implements Serializable {
     @NotNull(message = "打分权限不能为空")
     private Integer scorePermission;
 
-
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime startTime;
 

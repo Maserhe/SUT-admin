@@ -124,6 +124,7 @@ public class AccountController {
             userVo.setMajor(stuClass.getMajor());
             userVo.setClassNumber(stuClass.getClassNumber());
             userVo.setGrade(stuClass.getGrade());
+            userVo.setClassId(classId);
             return Result.succ(userVo);
         }
     }

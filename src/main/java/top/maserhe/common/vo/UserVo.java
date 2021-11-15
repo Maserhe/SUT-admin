@@ -38,7 +38,13 @@ public class UserVo implements Serializable {
     private String major;
 
     /**
-     * 班级
+     * 班级的主键id
+     */
+    private Integer classId;
+
+
+    /**
+     * 几班， 例如 2班
      */
     private Integer classNumber;
 
