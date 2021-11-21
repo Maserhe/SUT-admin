@@ -25,9 +25,8 @@ public class Img implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    private Integer userId;
+    private Integer homeworkId;
 
-    private Integer taskId;
 
     /**
      * 图片地址

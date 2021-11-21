@@ -9,13 +9,13 @@ import org.springframework.web.bind.annotation.*;
 
 import top.maserhe.common.dto.CourseTaskDto;
 import top.maserhe.common.lang.Result;
+import top.maserhe.common.vo.CourseTaskVo;
 import top.maserhe.entity.CourseTask;
 import top.maserhe.service.CourseTaskService;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -44,7 +44,16 @@ public class CourseTaskController {
         final Map<String, Object> map = new HashMap<>(1);
         map.put("course_id", courseId);
         Collection<CourseTask> ans = courseTaskService.listByMap(map);
-        return Result.succ(ans);
+
+        final LocalDateTime now = LocalDateTime.now();
+        final List<CourseTaskVo> resVo = ans.stream().map(t -> {
+            CourseTaskVo courseTaskVo = new CourseTaskVo();
+            BeanUtil.copyProperties(t, courseTaskVo);
+            boolean isUpload = courseTaskVo.getStartTime().isBefore(now) && courseTaskVo.getStopTime().isAfter(now);
+            courseTaskVo.setIsUpload(isUpload);
+            return courseTaskVo;
+        }).collect(Collectors.toList());
+        return Result.succ(resVo);
     }
 
 
