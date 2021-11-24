@@ -11,8 +11,9 @@ import org.springframework.web.bind.annotation.*;
 import top.maserhe.common.dto.FileDto;
 import top.maserhe.common.dto.HomeWorkDto;
 import top.maserhe.common.lang.Result;
-import top.maserhe.entity.Homework;
-import top.maserhe.entity.Img;
+import top.maserhe.entity.*;
+import top.maserhe.service.CourseService;
+import top.maserhe.service.CourseTaskService;
 import top.maserhe.service.HomeworkService;
 import top.maserhe.service.ImgService;
 
@@ -37,6 +38,11 @@ public class HomeworkController {
     @Autowired
     private ImgService imgService;
 
+    @Autowired
+    private CourseService courseService;
+
+    @Autowired
+    private CourseTaskService courseTaskService;
 
     @PostMapping("/upload")
     public Result uploadHomework(@Validated @RequestBody HomeWorkDto homeWorkDto) {
@@ -104,6 +110,37 @@ public class HomeworkController {
         Homework homework = homeworkService.listByMap(map).stream().collect(Collectors.toList()).get(0);
         return homework;
     }
+
+    /**
+     * 获取 某个 班级可以查看的全部 作业列表。
+     *
+     * @param classId
+     * @return
+     */
+    @GetMapping("/getList")
+    public Result getAll(Integer classId) {
+
+        // 1， 找到同班的课程
+        Map<String, Object> map = new HashMap<>(1);
+        map.put("class_id", classId);
+        List<Course> courses = courseService.listByMap(map).stream().collect(Collectors.toList());
+        // 2， 课程里面 的上机作业， 带有查看权限的
+        final Map<String, Object> tMap = new HashMap<>(1);
+        Map<String, Object> ans = new HashMap<>(courses.size());
+
+        courses.stream().forEach(t-> {
+            tMap.put("course_id", t.getId());
+            List<CourseTask> courseTasks = courseTaskService.listByMap(tMap).stream().collect(Collectors.toList());
+            ans.put(String.valueOf(t.getId()) , courseTasks);
+        });
+        // 3, 根据作业id 获取上机 上传的图片。
+
+        
+
+
+        return Result.succ(null);
+    }
+
 
 
 
