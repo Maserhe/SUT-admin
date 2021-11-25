@@ -1,5 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.markerhub.mapper.HomeworkMapper">
+<mapper namespace="top.maserhe.mapper.HomeworkMapper">
+
+
+    <select id="getAllList" resultType="top.maserhe.common.vo.HomeListVo">
+        SELECT hl.id,  hl.user_id, hl.task_file, hl.task_id, hl.course_id, hl.view_permission, hl.score_permission, hl.start_time, hl.stop_time, hl.title , hl.task_name, hl.description, user.name, user.avatar
+        FROM
+            (SELECT  hw.id,  hw.user_id, hw.task_file, hw.task_id, tl.course_id, tl.view_permission, tl.score_permission, tl.start_time, tl.stop_time, tl.title , tl.task_name, tl.description
+             FROM homework hw,
+                  (SELECT  ct.id , ct.course_id, ct.view_permission, ct.score_permission, ct.start_time, ct.stop_time , ct.task_name, ct.description, cs.title
+                   FROM course_task ct,
+                        (SELECT * FROM course WHERE class_id = #{classId}) cs
+                   WHERE ct.course_id = cs.id   and ct.view_permission = 1 ) tl
+             WHERE hw.task_id = tl.id ORDER BY tl.start_time DESC) hl ,
+            user WHERE hl.user_id = user.id
+    </select>
+
+    <!-- 获取可以打分权限的列表 -->
+    <select id="getScoreList" resultType="top.maserhe.common.vo.HomeListVo">
+        SELECT hl.id,  hl.user_id, hl.task_file, hl.task_id, hl.course_id, hl.view_permission, hl.score_permission, hl.start_time, hl.stop_time, hl.title , hl.task_name, hl.description, user.name, user.avatar
+        FROM
+            (SELECT  hw.id,  hw.user_id, hw.task_file, hw.task_id, tl.course_id, tl.view_permission, tl.score_permission, tl.start_time, tl.stop_time, tl.title , tl.task_name, tl.description
+             FROM homework hw,
+                  (SELECT  ct.id , ct.course_id, ct.view_permission, ct.score_permission, ct.start_time, ct.stop_time , ct.task_name, ct.description, cs.title
+                   FROM course_task ct,
+                        (SELECT * FROM course WHERE class_id = #{classId}) cs
+                   WHERE ct.course_id = cs.id   and ct.view_permission = 1 and ct.score_permission = 1 ) tl
+             WHERE hw.task_id = tl.id ORDER BY tl.start_time DESC) hl ,
+            user WHERE hl.user_id = user.id
+    </select>
+
 
 </mapper>

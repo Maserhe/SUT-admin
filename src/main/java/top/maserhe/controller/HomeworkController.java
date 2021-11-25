@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import top.maserhe.common.dto.FileDto;
 import top.maserhe.common.dto.HomeWorkDto;
 import top.maserhe.common.lang.Result;
+import top.maserhe.common.vo.HomeListVo;
 import top.maserhe.entity.*;
 import top.maserhe.service.CourseService;
 import top.maserhe.service.CourseTaskService;
@@ -119,30 +120,30 @@ public class HomeworkController {
      */
     @GetMapping("/getList")
     public Result getAll(Integer classId) {
-
-        // 1， 找到同班的课程
-        Map<String, Object> map = new HashMap<>(1);
-        map.put("class_id", classId);
-        List<Course> courses = courseService.listByMap(map).stream().collect(Collectors.toList());
-        // 2， 课程里面 的上机作业， 带有查看权限的
-        final Map<String, Object> tMap = new HashMap<>(1);
-        Map<String, Object> ans = new HashMap<>(courses.size());
-
-        courses.stream().forEach(t-> {
-            tMap.put("course_id", t.getId());
-            List<CourseTask> courseTasks = courseTaskService.listByMap(tMap).stream().collect(Collectors.toList());
-            ans.put(String.valueOf(t.getId()) , courseTasks);
-        });
-        // 3, 根据作业id 获取上机 上传的图片。
-
-        
-
-
-        return Result.succ(null);
+        List<HomeListVo> res = homeworkService.getAllList(classId);
+        return Result.succ(construct(res));
     }
 
+    /**
+     * 获取可以打分的上机列表
+     * @param classId
+     * @return
+     */
+    @GetMapping("/getScoreList")
+    public Result getScoreList(Integer classId) {
+        final List<HomeListVo> scoreList = homeworkService.getScoreList(classId);
+        return Result.succ(construct(scoreList));
+    }
 
-
-
-
+    private List<HomeListVo> construct(List<HomeListVo> list) {
+        // 1, 获取上机图片
+        Map<String, Object> map = new HashMap<>(1);
+        list.stream().forEach(t-> {
+            map.put("homework_id", t.getId());
+            final List<Img> imgs = imgService.listByMap(map).stream().collect(Collectors.toList());
+            t.setImgs(imgs);
+        });
+        // 2, 判定是否打过分数
+        return list;
+    }
 }
