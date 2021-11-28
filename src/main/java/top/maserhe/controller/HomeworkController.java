@@ -3,6 +3,7 @@ package top.maserhe.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.map.MapUtil;
+import org.apache.logging.log4j.message.ReusableMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
@@ -12,11 +13,9 @@ import top.maserhe.common.dto.FileDto;
 import top.maserhe.common.dto.HomeWorkDto;
 import top.maserhe.common.lang.Result;
 import top.maserhe.common.vo.HomeListVo;
+import top.maserhe.common.vo.HomeworkScoreVo;
 import top.maserhe.entity.*;
-import top.maserhe.service.CourseService;
-import top.maserhe.service.CourseTaskService;
-import top.maserhe.service.HomeworkService;
-import top.maserhe.service.ImgService;
+import top.maserhe.service.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -40,10 +39,7 @@ public class HomeworkController {
     private ImgService imgService;
 
     @Autowired
-    private CourseService courseService;
-
-    @Autowired
-    private CourseTaskService courseTaskService;
+    private UserService userService;
 
     @PostMapping("/upload")
     public Result uploadHomework(@Validated @RequestBody HomeWorkDto homeWorkDto) {
@@ -112,38 +108,55 @@ public class HomeworkController {
         return homework;
     }
 
-    /**
-     * 获取 某个 班级可以查看的全部 作业列表。
-     *
-     * @param classId
-     * @return
-     */
-    @GetMapping("/getList")
-    public Result getAll(Integer classId) {
-        List<HomeListVo> res = homeworkService.getAllList(classId);
-        return Result.succ(construct(res));
-    }
+
 
     /**
-     * 获取可以打分的上机列表
-     * @param classId
+     * 获取所有具有查看权限的 人
+     * @param courseId
+     * @param userId
      * @return
      */
-    @GetMapping("/getScoreList")
-    public Result getScoreList(Integer classId) {
-        final List<HomeListVo> scoreList = homeworkService.getScoreList(classId);
-        return Result.succ(construct(scoreList));
+    @PostMapping("/getByCourseIdList")
+    public Result getList(Integer courseId, Integer userId) {
+        List<HomeworkScoreVo> listByCourseIdAndUserId = homeworkService.getListByCourseIdAndUserId(courseId, userId);
+        return Result.succ(construct(listByCourseIdAndUserId));
     }
 
-    private List<HomeListVo> construct(List<HomeListVo> list) {
+
+    /**
+     * 根据班级id 和 用户id 获取所有列表
+     * @param classId
+     * @param userId
+     * @return
+     */
+    @PostMapping("/getByClassIdList")
+    public Result getListByClassIdAndUserId(Integer classId, Integer userId) {
+        List<HomeworkScoreVo> listByClassIdAndUserId = homeworkService.getListByClassIdAndUserId(classId, userId);
+        return Result.succ(construct(listByClassIdAndUserId));
+    }
+
+    private List<HomeworkScoreVo> construct(List<HomeworkScoreVo> list) {
         // 1, 获取上机图片
         Map<String, Object> map = new HashMap<>(1);
         list.stream().forEach(t-> {
+            map.clear();
             map.put("homework_id", t.getId());
             final List<Img> imgs = imgService.listByMap(map).stream().collect(Collectors.toList());
-            t.setImgs(imgs);
+            final List<String> urls = imgs.stream().map(i -> {
+                return i.getUrl();
+            }).collect(Collectors.toList());
+            t.setImgs(urls);
+            
+            map.clear();
+            map.put("id", t.getUserId());
+            List<User> users = userService.listByMap(map).stream().collect(Collectors.toList());
+            if (users.size() == 1) {
+                t.setAuthor(users.get(0).getName());
+            }
         });
-        // 2, 判定是否打过分数
+
         return list;
     }
+
+
 }

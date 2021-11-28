@@ -26,9 +26,5 @@ public class HelloController {
     @Autowired
     private HomeworkMapper homeworkMapper;
 
-    @RequestMapping("/getAll")
-    private Result getList(Integer classId) {
-        List<HomeListVo> allList = homeworkMapper.getAllList(classId);
-        return Result.succ(allList);
-    }
+
 }

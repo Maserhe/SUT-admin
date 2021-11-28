@@ -29,12 +29,12 @@ public class TaskGrade implements Serializable {
     /**
      * 被打分的人
      */
-    private Integer entityId;
+    private Integer homeworkId;
 
     /**
      * 对某个作业进行打分
      */
-    private Integer taskId;
+    private String comment;
 
     private Integer score;
 

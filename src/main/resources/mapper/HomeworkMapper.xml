@@ -3,31 +3,29 @@
 <mapper namespace="top.maserhe.mapper.HomeworkMapper">
 
 
-    <select id="getAllList" resultType="top.maserhe.common.vo.HomeListVo">
-        SELECT hl.id,  hl.user_id, hl.task_file, hl.task_id, hl.course_id, hl.view_permission, hl.score_permission, hl.start_time, hl.stop_time, hl.title , hl.task_name, hl.description, user.name, user.avatar
+    <select id="getListByCourseIdAndUserId" resultType="top.maserhe.common.vo.HomeworkScoreVo">
+        SELECT hl.id, hl.user_id, hl.task_id, hl.task_file, hl.description,  hl.final_score, hl.course_id, hl.task_name, hl.view_permission, hl.score_permission, hl.start_time, hl.stop_time, tg.id grade_id, tg.user_id entity_id, tg.comment, tg.score
         FROM
-            (SELECT  hw.id,  hw.user_id, hw.task_file, hw.task_id, tl.course_id, tl.view_permission, tl.score_permission, tl.start_time, tl.stop_time, tl.title , tl.task_name, tl.description
+            (SELECT hw.id, hw.user_id, hw.task_id, hw.task_file, hw.final_score, ct.course_id, ct.task_name, ct.view_permission, ct.score_permission, ct.start_time, ct.stop_time, ct.description
              FROM homework hw,
-                  (SELECT  ct.id , ct.course_id, ct.view_permission, ct.score_permission, ct.start_time, ct.stop_time , ct.task_name, ct.description, cs.title
-                   FROM course_task ct,
-                        (SELECT * FROM course WHERE class_id = #{classId}) cs
-                   WHERE ct.course_id = cs.id   and ct.view_permission = 1 ) tl
-             WHERE hw.task_id = tl.id ORDER BY tl.start_time DESC) hl ,
-            user WHERE hl.user_id = user.id
+                  (SELECT * FROM course_task WHERE course_id = #{courseId} and view_permission = 1 and score_permission = 1) ct
+             WHERE hw.task_id = ct.id) hl
+                LEFT JOIN task_grade tg
+                          ON hl.id = tg.homework_id and tg.user_id = #{userId}
     </select>
-
-    <!-- 获取可以打分权限的列表 -->
-    <select id="getScoreList" resultType="top.maserhe.common.vo.HomeListVo">
-        SELECT hl.id,  hl.user_id, hl.task_file, hl.task_id, hl.course_id, hl.view_permission, hl.score_permission, hl.start_time, hl.stop_time, hl.title , hl.task_name, hl.description, user.name, user.avatar
+    <select id="getListByClassIdAndUserId" resultType="top.maserhe.common.vo.HomeworkScoreVo">
+        SELECT res.id, res.user_id, res.task_id, res.task_file, res.final_score, res.course_id, res.task_name, res.description, res.view_permission, res.score_permission, res.start_time, res.stop_time, res.title, res.teacher_id, tg.id grade_id, tg.user_id entity_id, tg.comment, tg.score
         FROM
-            (SELECT  hw.id,  hw.user_id, hw.task_file, hw.task_id, tl.course_id, tl.view_permission, tl.score_permission, tl.start_time, tl.stop_time, tl.title , tl.task_name, tl.description
+            (SELECT hw.id, hw.user_id, hw.task_id, hw.task_file, hw.final_score, hl.course_id, hl.task_name, hl.description, hl.view_permission, hl.score_permission, hl.start_time, hl.stop_time, hl.title, hl.teacher_id
              FROM homework hw,
-                  (SELECT  ct.id , ct.course_id, ct.view_permission, ct.score_permission, ct.start_time, ct.stop_time , ct.task_name, ct.description, cs.title
+                  (SELECT  ct.id, ct.course_id, ct.task_name, ct.description, ct.view_permission, ct.score_permission, ct.start_time, ct.stop_time, cs.class_id, cs.title, cs.teacher_id
                    FROM course_task ct,
-                        (SELECT * FROM course WHERE class_id = #{classId}) cs
-                   WHERE ct.course_id = cs.id   and ct.view_permission = 1 and ct.score_permission = 1 ) tl
-             WHERE hw.task_id = tl.id ORDER BY tl.start_time DESC) hl ,
-            user WHERE hl.user_id = user.id
+                        (SELECT * FROM course WHERE course.class_id = #{classId}) cs WHERE ct.course_id = cs.id and ct.view_permission = 1) hl
+             WHERE hw.task_id = hl.id) res
+                LEFT JOIN task_grade tg
+                          ON res.id = tg.homework_id and tg.user_id = #{userId}
+
+
     </select>
 
 
