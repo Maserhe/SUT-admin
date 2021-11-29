@@ -103,10 +103,11 @@ public class CourseController {
             StuClass stuClass = stuClassService.getById(t.getClassId());
             vo.setMajor(stuClass.getMajor());
             vo.setGrade(stuClass.getGrade());
+            vo.setClassNumber(stuClass.getClassNumber());
 
             return vo;
         }).collect(Collectors.toList());
-
+        Collections.sort(vos);
         return Result.succ(vos);
     }
 
