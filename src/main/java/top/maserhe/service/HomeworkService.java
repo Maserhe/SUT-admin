@@ -3,6 +3,7 @@ package top.maserhe.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import top.maserhe.common.vo.HomeListVo;
 import top.maserhe.common.vo.HomeworkScoreVo;
+import top.maserhe.common.vo.HomeworkTeacherVo;
 import top.maserhe.entity.Homework;
 import com.baomidou.mybatisplus.extension.service.IService;
 import top.maserhe.mapper.HomeworkMapper;
@@ -38,5 +39,13 @@ public interface HomeworkService extends IService<Homework> {
      * @return
      */
     public List<HomeworkScoreVo> getListByClassIdAndUserId(Integer classId, Integer userId);
+
+
+    /**
+     * 根据teacherid 查询所有可以 更改的作业。
+     * @param teacherId
+     * @return
+     */
+    public List<HomeworkTeacherVo> getListByTeacherId(Integer teacherId);
 
 }

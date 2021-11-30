@@ -14,11 +14,14 @@ import top.maserhe.common.dto.HomeWorkDto;
 import top.maserhe.common.lang.Result;
 import top.maserhe.common.vo.HomeListVo;
 import top.maserhe.common.vo.HomeworkScoreVo;
+import top.maserhe.common.vo.HomeworkTeacherVo;
+import top.maserhe.common.vo.TaskGradeVo;
 import top.maserhe.entity.*;
 import top.maserhe.service.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * <p>
@@ -40,6 +43,10 @@ public class HomeworkController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private TaskGradeService taskGradeService;
+
 
     @PostMapping("/upload")
     public Result uploadHomework(@Validated @RequestBody HomeWorkDto homeWorkDto) {
@@ -135,28 +142,98 @@ public class HomeworkController {
         return Result.succ(construct(listByClassIdAndUserId));
     }
 
+
+    @PostMapping("/getByTeacherIdList")
+    public Result getListByTeacherId(Integer teacherId) {
+        List<HomeworkTeacherVo> list = homeworkService.getListByTeacherId(teacherId);
+        constructTeacherVo(list);
+        Collections.sort(list);
+        return Result.succ(list);
+    }
+
+
+    /**
+     * 对某个作业打分
+     * @param homeworkId
+     * @param score
+     * @return
+     */
+    @PostMapping("/mark")
+    public Result marking(Integer homeworkId, Integer score) {
+        Homework homework = homeworkService.getById(homeworkId);
+        homework.setFinalScore(score);
+        final boolean res = homeworkService.updateById(homework);
+        return Result.succ(res);
+    }
+
+
+
+
     private List<HomeworkScoreVo> construct(List<HomeworkScoreVo> list) {
         // 1, 获取上机图片
         Map<String, Object> map = new HashMap<>(1);
         list.stream().forEach(t-> {
-            map.clear();
-            map.put("homework_id", t.getId());
-            final List<Img> imgs = imgService.listByMap(map).stream().collect(Collectors.toList());
-            final List<String> urls = imgs.stream().map(i -> {
-                return i.getUrl();
+            t.setImgs(searchImgUrls(t.getId()));
+            t.setAuthor(searchAuthor(t.getUserId()));
+        });
+        return list;
+    }
+
+    private List<HomeworkTeacherVo> constructTeacherVo(List<HomeworkTeacherVo> list) {
+        final Map<String, Object> map = new HashMap<>(1);
+
+        list.stream().forEach(t -> {
+
+            List<TaskGrade> taskGrades = taskGradeService.listByMap(map).stream().collect(Collectors.toList());
+            List<TaskGradeVo> taskGradeVos = taskGrades.stream().map(te -> {
+                TaskGradeVo vo = new TaskGradeVo();
+                BeanUtil.copyProperties(te, vo);
+                vo.setAuthor(searchAuthor(te.getUserId()));
+                return vo;
             }).collect(Collectors.toList());
-            t.setImgs(urls);
-            
-            map.clear();
-            map.put("id", t.getUserId());
-            List<User> users = userService.listByMap(map).stream().collect(Collectors.toList());
-            if (users.size() == 1) {
-                t.setAuthor(users.get(0).getName());
-            }
+            // 1,设置 vo
+            t.setTaskGradeVoList(taskGradeVos);
+            // 2, 设置 图片
+            t.setImgs(searchImgUrls(t.getId()));
+            // 3， 设置用户名
+            t.setAuthor(searchAuthor(t.getUserId()));
+
         });
 
         return list;
     }
+
+    /**
+     * 查询 上机报告的图片
+     * @param homeworkId
+     * @return
+     */
+    private List<String> searchImgUrls(Integer homeworkId) {
+        final Map<String, Object> map = new HashMap<>(1);
+        map.put("homework_id", homeworkId);
+        final List<Img> imgs = imgService.listByMap(map).stream().collect(Collectors.toList());
+        final List<String> urls = imgs.stream().map(i -> {
+            return i.getUrl();
+        }).collect(Collectors.toList());
+        return urls;
+    }
+
+    /**
+     * 查询用户名
+     * @param userId
+     * @return
+     */
+    private String searchAuthor(Integer userId) {
+        final Map<String, Object> map = new HashMap<>(1);
+        map.put("id", userId);
+        List<User> users = userService.listByMap(map).stream().collect(Collectors.toList());
+        if (users.size() == 1) {
+            return users.get(0).getName();
+        }
+        return null;
+    }
+
+
 
 
 }

@@ -27,6 +27,19 @@
 
 
     </select>
+    <select id="getListByTeacherId" resultType="top.maserhe.common.vo.HomeworkTeacherVo">
+        SELECT hl.id,hl.user_id, hl.task_id, hl.task_file, hl.final_score, hl.course_id, hl.task_name, hl.description, hl.view_permission, hl.score_permission, hl.start_time, hl.stop_time, hl.title, hl.img, hl.class_id, sc.major, sc.class_number, sc.grade
+        FROM
+            (SELECT hw.id,hw.user_id, hw.task_id, hw.task_file, hw.final_score, tl.course_id, tl.task_name, tl.description, tl.view_permission, tl.score_permission, tl.start_time, tl.stop_time, tl.title, tl.img, tl.class_id
+             FROM homework hw,
+                  (SELECT ct.id, ct.course_id, ct.task_name, ct.description, ct.view_permission, ct.score_permission, ct.start_time, ct.stop_time, cl.title, cl.img, cl.class_id
+                   FROM course_task ct,
+                        (SELECT * FROM course WHERE teacher_id = #{teacherId}) cl
+                   WHERE cl.id = ct.course_id AND ct.view_permission = 1) tl
+             WHERE hw.task_id = tl.id) hl,
+            stu_class sc
+        WHERE hl.class_id = sc.id
+    </select>
 
 
 </mapper>

@@ -3,6 +3,7 @@ package top.maserhe.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import top.maserhe.common.vo.HomeListVo;
 import top.maserhe.common.vo.HomeworkScoreVo;
+import top.maserhe.common.vo.HomeworkTeacherVo;
 import top.maserhe.entity.Homework;
 import top.maserhe.mapper.HomeworkMapper;
 import top.maserhe.service.HomeworkService;
@@ -34,5 +35,10 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkMapper, Homework> i
     @Override
     public List<HomeworkScoreVo> getListByClassIdAndUserId(Integer classId, Integer userId) {
         return homeworkMapper.getListByClassIdAndUserId(classId, userId);
+    }
+
+    @Override
+    public List<HomeworkTeacherVo> getListByTeacherId(Integer teacherId) {
+        return homeworkMapper.getListByTeacherId(teacherId);
     }
 }
