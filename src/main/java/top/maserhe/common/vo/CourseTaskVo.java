@@ -45,4 +45,9 @@ public class CourseTaskVo {
     private LocalDateTime stopTime;
 
     private Boolean isUpload;
+
+    /**
+     * 权重
+     */
+    private Double weight;
 }

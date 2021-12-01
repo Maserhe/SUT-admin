@@ -30,8 +30,8 @@ public class StuClass implements Serializable , Comparable {
     @Override
     public int compareTo(Object o) {
         StuClass t = (StuClass) o;
-        String str1 = this.grade + this.major + this.classNumber;
-        String str2 = t.grade + t.major + t.classNumber;
+        String str1 = this.grade + this.major ;
+        String str2 = t.grade + t.major;
         return str1.compareTo(str2);
     }
 
@@ -40,10 +40,6 @@ public class StuClass implements Serializable , Comparable {
      */
     private String major;
 
-    /**
-     * 班级
-     */
-    private Integer classNumber;
 
     /**
      * 年级

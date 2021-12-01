@@ -3,7 +3,6 @@ package top.maserhe.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +13,6 @@ import top.maserhe.common.vo.CourseResourceVo;
 import top.maserhe.common.vo.CourseVo;
 import top.maserhe.entity.Course;
 import top.maserhe.entity.StuClass;
-import top.maserhe.entity.User;
 import top.maserhe.service.CourseService;
 import top.maserhe.service.StuClassService;
 import top.maserhe.service.UserService;
@@ -95,15 +93,20 @@ public class CourseController {
 
         Map<String, Object> map = new HashMap<>(1);
         map.put("teacher_id", teacherId);
+
+        // 查询出来所有的课程
         List<Course> res = courseService.listByMap(map).stream().collect(Collectors.toList());
+
         // 根据classId 获取年级
         final List<CourseResourceVo> vos = res.stream().map(t -> {
+
             CourseResourceVo vo = new CourseResourceVo();
             BeanUtil.copyProperties(t, vo);
+
+            // 查询出来 年级 和 专业
             StuClass stuClass = stuClassService.getById(t.getClassId());
             vo.setMajor(stuClass.getMajor());
             vo.setGrade(stuClass.getGrade());
-            vo.setClassNumber(stuClass.getClassNumber());
 
             return vo;
         }).collect(Collectors.toList());

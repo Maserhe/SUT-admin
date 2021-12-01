@@ -47,6 +47,15 @@ public class HomeworkController {
     @Autowired
     private TaskGradeService taskGradeService;
 
+    @Autowired
+    private CourseService courseService;
+
+    @Autowired
+    private StuClassService stuClassService;
+
+    @Autowired
+    private CourseTaskService courseTaskService;
+
 
     @PostMapping("/upload")
     public Result uploadHomework(@Validated @RequestBody HomeWorkDto homeWorkDto) {
@@ -151,6 +160,44 @@ public class HomeworkController {
         return Result.succ(list);
     }
 
+    @PostMapping("/getByTaskId")
+    public Result getListByTaskId(Integer taskId) {
+
+        final CourseTask courseTask = courseTaskService.getById(taskId);
+        final Integer courseId = courseTask.getCourseId();
+        final Course course = courseService.getById(courseId);
+        final Integer classId = course.getClassId();
+        final StuClass stuClass = stuClassService.getById(classId);
+
+        Map<String, Object> map = new HashMap<>(1);
+        map.put("task_id", taskId);
+
+        final List<Homework> homeworks = homeworkService.listByMap(map).stream().collect(Collectors.toList());
+        List<HomeworkTeacherVo> res = homeworks.stream().map(t -> {
+            HomeworkTeacherVo vo = new HomeworkTeacherVo();
+            BeanUtil.copyProperties(t, vo);
+            vo.setGrade(stuClass.getGrade());
+            vo.setMajor(stuClass.getMajor());
+            vo.setCourseId(courseId);
+            vo.setTitle(course.getTitle());
+            vo.setImg(course.getImg());
+            vo.setDescription(course.getDescription());
+            vo.setStartTime(courseTask.getStartTime());
+            vo.setStopTime(courseTask.getStopTime());
+            vo.setViewPermission(courseTask.getViewPermission());
+            vo.setScorePermission(courseTask.getScorePermission());
+            vo.setTaskName(courseTask.getTaskName());
+            vo.setClassId(classId);
+            vo.setWeight(courseTask.getWeight());
+
+            return vo;
+        }).collect(Collectors.toList());
+        constructTeacherVo(res);
+        Collections.sort(res);
+        return Result.succ(res);
+    }
+
+
 
     /**
      * 对某个作业打分
@@ -174,30 +221,55 @@ public class HomeworkController {
         Map<String, Object> map = new HashMap<>(1);
         list.stream().forEach(t-> {
             t.setImgs(searchImgUrls(t.getId()));
-            t.setAuthor(searchAuthor(t.getUserId()));
+            t.setAuthor(searchUser(t.getUserId()).getName());
         });
         return list;
     }
 
     private List<HomeworkTeacherVo> constructTeacherVo(List<HomeworkTeacherVo> list) {
         final Map<String, Object> map = new HashMap<>(1);
-
         list.stream().forEach(t -> {
-
+            map.clear();
+            map.put("homework_id", t.getId());
             List<TaskGrade> taskGrades = taskGradeService.listByMap(map).stream().collect(Collectors.toList());
+
+
             List<TaskGradeVo> taskGradeVos = taskGrades.stream().map(te -> {
                 TaskGradeVo vo = new TaskGradeVo();
                 BeanUtil.copyProperties(te, vo);
-                vo.setAuthor(searchAuthor(te.getUserId()));
+                vo.setAuthor(searchUser(te.getUserId()).getName());
                 return vo;
             }).collect(Collectors.toList());
-            // 1,设置 vo
+
+            // 1,设置 vo 打分的
             t.setTaskGradeVoList(taskGradeVos);
             // 2, 设置 图片
             t.setImgs(searchImgUrls(t.getId()));
-            // 3， 设置用户名
-            t.setAuthor(searchAuthor(t.getUserId()));
+            // 3， 设置用户名, 以及班号
+            User user = searchUser(t.getUserId());
+            t.setAuthor(user.getName());
+            t.setClassNumber(user.getClassNumber());
 
+            // 4， 计算平均分
+            // 老师打分
+            Integer finalScore = t.getFinalScore();
+            Double sum = 0.0;
+            // 5, 根据权值进行打分。
+            if (finalScore != null) {
+                if (t.getScorePermission() == 1) {
+                    for (int i = 0; i < taskGradeVos.size(); i++) {
+                        Integer score = taskGrades.get(i).getScore();
+                        if (score != null) {
+                            sum += score;
+                        }
+                    }
+                    // 计算结果
+                    Double ans = t.getWeight() * finalScore + (1 - t.getWeight()) * (sum / taskGradeVos.size());
+                    t.setAverage(ans);
+                } else {
+                    t.setAverage(finalScore.doubleValue());
+                }
+            }
         });
 
         return list;
@@ -223,12 +295,12 @@ public class HomeworkController {
      * @param userId
      * @return
      */
-    private String searchAuthor(Integer userId) {
+    private User searchUser(Integer userId) {
         final Map<String, Object> map = new HashMap<>(1);
         map.put("id", userId);
         List<User> users = userService.listByMap(map).stream().collect(Collectors.toList());
         if (users.size() == 1) {
-            return users.get(0).getName();
+            return users.get(0);
         }
         return null;
     }

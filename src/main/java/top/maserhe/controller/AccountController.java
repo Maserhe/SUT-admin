@@ -94,13 +94,7 @@ public class AccountController {
         String userId = jwtUtils.getClaimByToken(token).getSubject();
         User user = userService.getById(Long.parseLong(userId));
         Assert.notNull(user, "登陆凭证失效");
-        return Result.succ(MapUtil.builder()
-                .put("id", user.getId())
-                .put("username", user.getUsername())
-                .put("avatar", user.getAvatar())
-                .put("type", user.getType())
-                .put("name", user.getName())
-                .map());
+        return Result.succ(getVo(user));
     }
 
     /**
@@ -109,20 +103,22 @@ public class AccountController {
      * @return
      */
     public Result getVo(User user) {
+
         if (user.getType() == 1) {
             // 老师
             AdminVo adminVo = new AdminVo();
             BeanUtil.copyProperties(user, adminVo);
             return Result.succ(adminVo);
         }
+
         else {
             // 学生
             UserVo userVo = new UserVo();
             BeanUtil.copyProperties(user, userVo);
+
             Integer classId = user.getClassId();
             StuClass stuClass = stuClassService.getOne(new QueryWrapper<StuClass>().eq("id", classId));
             userVo.setMajor(stuClass.getMajor());
-            userVo.setClassNumber(stuClass.getClassNumber());
             userVo.setGrade(stuClass.getGrade());
             userVo.setClassId(classId);
             return Result.succ(userVo);

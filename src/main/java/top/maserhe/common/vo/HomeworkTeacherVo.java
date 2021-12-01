@@ -73,6 +73,11 @@ public class HomeworkTeacherVo implements Comparable{
     private String grade;
 
     /**
+     * 权值
+     */
+    private Double weight;
+
+    /**
      * 上机报告的图片
      */
     private List<String> imgs;
@@ -84,6 +89,11 @@ public class HomeworkTeacherVo implements Comparable{
     private String author;
 
     private List<TaskGradeVo> taskGradeVoList;
+
+    /**
+     * 最后得到的平均分
+     */
+    private Double average;
 
     @Override
     public int compareTo(Object o) {

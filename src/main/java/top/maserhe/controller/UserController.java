@@ -54,6 +54,7 @@ public class UserController {
         if (BeanUtil.isEmpty(stuDto.getAvatar())) {
             stuDto.setAvatar("https://ghproxy.com/https://github.com/Maserhe/PIc-Bed/blob/master/typora/202110271336023.jpg");
         }
+
         User user = new User();
         BeanUtil.copyProperties(stuDto, user);
         // 插入数据库
@@ -76,15 +77,19 @@ public class UserController {
             csvReader.readHeaders();
             // 2, 读取数据
             while (csvReader.readRecord()) {
-                String username = csvReader.get(0);
-                String name = csvReader.get(1);
-                String password = csvReader.get(2);
+
+                String classNumber = csvReader.get(0);
+                String username = csvReader.get(1);
+                String name = csvReader.get(2);
+                String password = csvReader.get(3);
 
                 Assert.notNull(username, "学号为空");
                 Assert.notNull(name, "姓名为空");
                 Assert.notNull(password, "密码为空");
+                Assert.notNull(classNumber, "班号不能为空");
+
                 // 3, 数据写入
-                User user = constructUser(username, name, password, id);
+                User user = constructUser(username, name, password, id, Integer.valueOf(classNumber));
                 boolean save = userService.save(user);
                 if (! save) {
                     flag = false;
@@ -136,7 +141,7 @@ public class UserController {
      * @param password
      * @return
      */
-    private User constructUser(String username, String name, String password, Integer id) {
+    private User constructUser(String username, String name, String password, Integer id, Integer classNumber) {
         User user = new User();
         user.setUsername(username);
         user.setName(name);
@@ -144,6 +149,7 @@ public class UserController {
         user.setType(2);
         user.setAvatar("https://ghproxy.com/https://github.com/Maserhe/PIc-Bed/blob/master/typora/202110271336023.jpg");
         user.setClassId(id);
+        user.setClassNumber(classNumber);
         return user;
     }
 

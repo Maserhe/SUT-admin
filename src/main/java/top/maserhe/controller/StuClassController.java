@@ -2,7 +2,6 @@ package top.maserhe.controller;
 
 
 import cn.hutool.core.map.MapUtil;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -13,7 +12,6 @@ import top.maserhe.common.lang.Result;
 import top.maserhe.entity.StuClass;
 import top.maserhe.service.StuClassService;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +48,7 @@ public class StuClassController {
         List<StuClass> list = stuClassService.list();
         List<Map<Object, Object>> ans = new ArrayList<>(list.size());
         list.forEach(t-> {
-            Map<Object, Object> build = MapUtil.builder().put("id", t.getId()).put("value", t.getGrade() + "级" + t.getMajor() + t.getClassNumber() + "班").build();
+            Map<Object, Object> build = MapUtil.builder().put("id", t.getId()).put("value", t.getGrade() + "级" + t.getMajor()).build();
             ans.add(build);
         });
         return Result.succ(ans);

@@ -24,6 +24,7 @@ public class CourseResourceVo implements Comparable {
      */
     private String description;
 
+
     private Integer teacherId;
 
     /**
@@ -38,19 +39,16 @@ public class CourseResourceVo implements Comparable {
     private String grade;
 
 
-    private Integer classNumber;
-
 
     @Override
     public int compareTo(Object o) {
+
         CourseResourceVo t = (CourseResourceVo) o;
         int ans = grade.compareTo(t.getGrade());
         if (ans == 0) {
             ans = major.compareTo(t.getMajor());
         }
-        if (ans == 0) {
-            ans = classNumber.compareTo(t.getClassNumber());
-        }
+
         if (ans == 0) {
             ans = title.compareTo(t.getTitle());
         }

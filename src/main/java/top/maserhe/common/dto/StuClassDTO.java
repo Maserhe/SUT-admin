@@ -3,7 +3,6 @@ package top.maserhe.common.dto;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
@@ -21,11 +20,6 @@ public class StuClassDTO implements Serializable {
     @NotBlank(message = "专业不能为空")
     private String major;
 
-    /**
-     * 班级
-     */
-    @NotNull(message = "班级号不能为空")
-    private Integer classNumber;
 
     /**
      * 年级

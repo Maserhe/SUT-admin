@@ -42,11 +42,11 @@ public class UserVo implements Serializable {
      */
     private Integer classId;
 
-
     /**
      * 几班， 例如 2班
      */
     private Integer classNumber;
+
 
     /**
      * 年级

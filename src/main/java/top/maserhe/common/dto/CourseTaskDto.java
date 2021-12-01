@@ -47,4 +47,8 @@ public class CourseTaskDto {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime stopTime;
 
+    /**
+     * 权重
+     */
+    private Double weight;
 }

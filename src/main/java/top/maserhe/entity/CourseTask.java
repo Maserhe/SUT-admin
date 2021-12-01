@@ -58,4 +58,9 @@ public class CourseTask implements Serializable {
     private LocalDateTime stopTime;
 
 
+    /**
+     * 权重
+     */
+    private Double weight;
+
 }

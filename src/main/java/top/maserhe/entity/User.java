@@ -47,5 +47,9 @@ public class User implements Serializable {
      */
     private Integer classId;
 
+    /**
+     * 班级号码
+     */
+    private Integer classNumber;
 
 }

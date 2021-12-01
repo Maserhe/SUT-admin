@@ -34,4 +34,9 @@ public class StuDto implements Serializable {
      * 班级id
      */
     private Integer classId;
+
+    /**
+     * 班级号码
+     */
+    private Integer classNumber;
 }
