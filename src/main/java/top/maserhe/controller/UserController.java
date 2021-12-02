@@ -10,12 +10,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import top.maserhe.common.dto.StuDto;
 import top.maserhe.common.lang.Result;
-import top.maserhe.common.vo.AdminVo;
-import top.maserhe.common.vo.UserVo;
 import top.maserhe.entity.User;
 import top.maserhe.service.UserService;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.*;
@@ -38,7 +35,6 @@ public class UserController {
 
     @GetMapping("/{id}")
     public Object test(@PathVariable("id") Long id) {
-
         return userService.getById(id);
     }
 
@@ -52,7 +48,7 @@ public class UserController {
 
         Assert.notNull(stuDto, "输入信息有误");
         if (BeanUtil.isEmpty(stuDto.getAvatar())) {
-            stuDto.setAvatar("https://ghproxy.com/https://github.com/Maserhe/PIc-Bed/blob/master/typora/202110271336023.jpg");
+            stuDto.setAvatar("head.jpg");
         }
 
         User user = new User();
@@ -114,15 +110,6 @@ public class UserController {
         Map<String, Object> columnMap = new HashMap<>();
         columnMap.put("class_id", classId);
         Collection<User> users = userService.listByMap(columnMap);
-
-//        List<AdminVo> ans= new ArrayList<>(users.size());
-//
-//        users.forEach(t-> {
-//            AdminVo adminVo = new AdminVo();
-//            BeanUtil.copyProperties(t, adminVo);
-//            ans.add(adminVo);
-//        });
-
         return Result.succ(users);
     }
 
@@ -147,13 +134,37 @@ public class UserController {
         user.setName(name);
         user.setPassword(password);
         user.setType(2);
-        user.setAvatar("https://ghproxy.com/https://github.com/Maserhe/PIc-Bed/blob/master/typora/202110271336023.jpg");
+        user.setAvatar("head.jpg");
         user.setClassId(id);
         user.setClassNumber(classNumber);
         return user;
     }
 
+    /**
+     * 修改用户 头像
+     * @param id
+     * @param avatar
+     * @return
+     */
+    @PostMapping("/changAvator")
+    public Result changeAvatar(Integer id, String avatar) {
 
+        User user = userService.getById(id);
+        user.setAvatar(avatar);
+        final boolean res = userService.updateById(user);
+        return Result.succ(res);
+    }
+
+    @PostMapping("/changePass")
+    public Result changePass(Integer id, String oldPass, String newPass) {
+        User user = userService.getById(id);
+        if (oldPass.equals(user.getPassword())) {
+            user.setPassword(newPass);
+            final boolean res = userService.updateById(user);
+            return Result.succ(res);
+        }
+        return Result.fail("密码错误");
+    }
 
 
 

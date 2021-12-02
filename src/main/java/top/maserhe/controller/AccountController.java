@@ -94,7 +94,7 @@ public class AccountController {
         String userId = jwtUtils.getClaimByToken(token).getSubject();
         User user = userService.getById(Long.parseLong(userId));
         Assert.notNull(user, "登陆凭证失效");
-        return Result.succ(getVo(user));
+        return getVo(user);
     }
 
     /**
