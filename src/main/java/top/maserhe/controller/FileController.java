@@ -57,6 +57,7 @@ public class FileController {
         // Load file as Resource
         Resource resource = fileStorageService.loadFileAsResource(fileName);
 
+
         // Try to determine file's content type
         String contentType = null;
         try {

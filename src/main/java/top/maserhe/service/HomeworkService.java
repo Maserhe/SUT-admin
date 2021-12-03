@@ -48,4 +48,11 @@ public interface HomeworkService extends IService<Homework> {
      */
     public List<HomeworkTeacherVo> getListByTeacherId(Integer teacherId);
 
+    /**
+     * 删除文件
+     * @param id
+     * @return
+     */
+    public boolean deleteHomeworkFile(Integer id);
+
 }

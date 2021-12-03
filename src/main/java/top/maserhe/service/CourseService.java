@@ -13,4 +13,10 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface CourseService extends IService<Course> {
 
+    /**
+     * 删除课程
+     * @param id
+     * @return
+     */
+    public boolean deleteCourse(Integer id);
 }

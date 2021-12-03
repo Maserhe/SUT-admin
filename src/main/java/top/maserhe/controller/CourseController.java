@@ -79,7 +79,7 @@ public class CourseController {
 
     @PostMapping("/delete")
     public Result deleteCourse(Integer courseId) {
-        final boolean res = courseService.removeById(courseId);
+        final boolean res = courseService.deleteCourse(courseId);
         return Result.succ(res);
     }
 

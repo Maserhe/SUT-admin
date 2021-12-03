@@ -9,12 +9,14 @@ import org.springframework.web.bind.annotation.*;
 
 import top.maserhe.common.dto.StuClassDTO;
 import top.maserhe.common.lang.Result;
+import top.maserhe.entity.Course;
+import top.maserhe.entity.CourseTask;
+import top.maserhe.entity.Homework;
 import top.maserhe.entity.StuClass;
-import top.maserhe.service.StuClassService;
+import top.maserhe.service.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 班级控制
@@ -28,6 +30,19 @@ public class StuClassController {
 
     @Autowired
     private StuClassService stuClassService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private CourseService courseService;
+
+    @Autowired
+    private CourseTaskService courseTaskService;
+
+    @Autowired
+    private HomeworkService homeworkService;
+
 
     /**
      * 获取所有 班级
@@ -62,7 +77,19 @@ public class StuClassController {
      */
     @PostMapping("/delete")
     public Result deleteClass(int id) {
+
         boolean flag = stuClassService.removeById(id);
+
+        // 1， 需要把该班级的学生也全部删除
+        final Map<String, Object> map = new HashMap<>(1);
+        map.put("class_id", id);
+        userService.removeByMap(map);
+        // 2, 把课程也给删除
+        Collection<Course> courses = courseService.listByMap(map);
+        courses.stream().forEach(t-> {
+            courseService.deleteCourse(t.getId());
+        });
+
         return Result.succ(flag);
     }
 

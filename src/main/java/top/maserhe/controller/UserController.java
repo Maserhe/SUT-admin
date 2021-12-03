@@ -8,6 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.web.multipart.MultipartFile;
+import top.maserhe.common.dto.AdminDto;
 import top.maserhe.common.dto.StuDto;
 import top.maserhe.common.lang.Result;
 import top.maserhe.entity.User;
@@ -16,6 +17,7 @@ import top.maserhe.service.UserService;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -54,8 +56,7 @@ public class UserController {
         User user = new User();
         BeanUtil.copyProperties(stuDto, user);
         // 插入数据库
-        boolean save = userService.save(user);
-        return Result.succ(save);
+        return Result.succ(addUser(user));
     }
 
     /**
@@ -86,7 +87,7 @@ public class UserController {
 
                 // 3, 数据写入
                 User user = constructUser(username, name, password, id, Integer.valueOf(classNumber));
-                boolean save = userService.save(user);
+                boolean save = addUser(user);
                 if (! save) {
                     flag = false;
                 }
@@ -146,7 +147,7 @@ public class UserController {
      * @param avatar
      * @return
      */
-    @PostMapping("/changAvator")
+    @PostMapping("/changeAvatar")
     public Result changeAvatar(Integer id, String avatar) {
 
         User user = userService.getById(id);
@@ -166,8 +167,41 @@ public class UserController {
         return Result.fail("密码错误");
     }
 
+    @PostMapping("/addAdmin")
+    public Result addAdmin(@Validated @RequestBody AdminDto adminDto) {
+        Assert.notNull(adminDto, "参数错误");
+
+        Map<String, Object> map = new HashMap<>(1);
+        map.put("username", adminDto.getUsername());
+        Collection<User> users = userService.listByMap(map);
+        if (users.size() != 0) {
+            return Result.succ(200, "用户已经存在了", false);
+        }
+        User user = new User();
+        BeanUtil.copyProperties(adminDto, user);
+        user.setAvatar("head.jpg");
+        user.setType(1);
+        boolean res = userService.save(user);
+        return Result.succ(res);
+    }
 
 
+
+    private boolean addUser(User user) {
+        Assert.notNull(user, "参数错误");
+
+        // 1, 查询用户是否存在
+        Map<String, Object> map = new HashMap<>(1);
+        map.put("username", user.getUsername());
+
+        List<User> users = userService.listByMap(map).stream().collect(Collectors.toList());
+        if (users.size() != 0) {
+            Assert.notNull(null, "重复添加用户" + users.get(0).getUsername());
+            return false;
+        } else {
+            return userService.save(user);
+        }
+    }
 
 }
 

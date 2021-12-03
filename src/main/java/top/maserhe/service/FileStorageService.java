@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import top.maserhe.common.excepton.FileException;
 import top.maserhe.config.FileStorageProperties;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -61,6 +62,7 @@ public class FileStorageService {
     }
 
     public Resource loadFileAsResource(String fileName) {
+
         try {
             Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
             Resource resource = new UrlResource(filePath.toUri());
@@ -72,5 +74,14 @@ public class FileStorageService {
         } catch (MalformedURLException ex) {
             throw new FileException("File not found " + fileName, ex);
         }
+    }
+
+    public Boolean deleteFile(String fileName) {
+        if (fileName == null || fileName == "") {
+            return false;
+        }
+        Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
+        File file = filePath.toFile();
+        return file.delete();
     }
 }

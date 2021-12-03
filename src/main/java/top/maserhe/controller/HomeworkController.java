@@ -57,6 +57,8 @@ public class HomeworkController {
     private CourseTaskService courseTaskService;
 
 
+
+
     @PostMapping("/upload")
     public Result uploadHomework(@Validated @RequestBody HomeWorkDto homeWorkDto) {
         Assert.notNull(homeWorkDto, "上传作业为空");
@@ -68,7 +70,7 @@ public class HomeworkController {
         List<Homework> homeworks = homeworkService.listByMap(map).stream().collect(Collectors.toList());
         if (homeworks.size() > 0) {
             // 删除上一次上传的
-            homeworkService.removeByMap(map);
+            homeworkService.deleteHomeworkFile(homeworks.get(0).getId());
         }
         Homework homework = new Homework();
         BeanUtil.copyProperties(homeWorkDto, homework);
@@ -253,19 +255,23 @@ public class HomeworkController {
             // 4， 计算平均分
             // 老师打分
             Integer finalScore = t.getFinalScore();
-            Double sum = 0.0;
             // 5, 根据权值进行打分。
             if (finalScore != null) {
-                if (t.getScorePermission() == 1) {
+                if (t.getScorePermission() == 1 ) {
+                    Double sum = 0.0;
                     for (int i = 0; i < taskGradeVos.size(); i++) {
                         Integer score = taskGrades.get(i).getScore();
                         if (score != null) {
                             sum += score;
                         }
                     }
+                    Double ans = t.getWeight() * finalScore;
                     // 计算结果
-                    Double ans = t.getWeight() * finalScore + (1 - t.getWeight()) * (sum / taskGradeVos.size());
+                    if (sum != 0 && taskGradeVos.size() > 0) {
+                       ans += (1 - t.getWeight()) * (sum / taskGradeVos.size());
+                    }
                     t.setAverage(ans);
+
                 } else {
                     t.setAverage(finalScore.doubleValue());
                 }

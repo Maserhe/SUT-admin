@@ -2,9 +2,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/sut-homework-system?characterEncoding=utf-8&useSSL=false&serverTimezone=Hongkong&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3306/sut?characterEncoding=utf-8&useSSL=false&serverTimezone=Hongkong&allowPublicKeyRetrieval=true
     username: root
-    password: 12345678
+    password: 123456
   # 开启 multipart 上传功能
   servlet:
     multipart:
@@ -35,3 +35,5 @@ maserhe:
 # 所有通过 REST APIs 上传的文件都将存储在此目录下
 file:
   upload-dir: uploads
+server:
+  port: 8080

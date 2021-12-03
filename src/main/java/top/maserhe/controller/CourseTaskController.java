@@ -81,7 +81,7 @@ public class CourseTaskController {
     @PostMapping("/deleteTask")
     public Result deleteTask(Integer taskId) {
         Assert.notNull(taskId, "作业id不能为空d");
-        final boolean res = courseTaskService.removeById(taskId);
+        final boolean res = courseTaskService.deleteTask(taskId);
         return Result.succ(res);
     }
 
