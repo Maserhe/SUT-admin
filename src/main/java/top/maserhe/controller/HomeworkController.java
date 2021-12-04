@@ -4,6 +4,7 @@ package top.maserhe.controller;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.map.MapUtil;
 import org.apache.logging.log4j.message.ReusableMessage;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
@@ -12,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import top.maserhe.common.dto.FileDto;
 import top.maserhe.common.dto.HomeWorkDto;
 import top.maserhe.common.lang.Result;
-import top.maserhe.common.vo.HomeListVo;
 import top.maserhe.common.vo.HomeworkScoreVo;
 import top.maserhe.common.vo.HomeworkTeacherVo;
 import top.maserhe.common.vo.TaskGradeVo;
@@ -21,7 +21,6 @@ import top.maserhe.service.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * <p>
@@ -58,7 +57,7 @@ public class HomeworkController {
 
 
 
-
+    @RequiresAuthentication
     @PostMapping("/upload")
     public Result uploadHomework(@Validated @RequestBody HomeWorkDto homeWorkDto) {
         Assert.notNull(homeWorkDto, "上传作业为空");
@@ -94,12 +93,14 @@ public class HomeworkController {
         return Result.succ(save);
     }
 
+    @RequiresAuthentication
     @GetMapping("/getHomeWork")
     public Result getHomeWork(@Validated @RequestBody FileDto fileDto) {
         Assert.notNull(fileDto, "参数错误");
         return Result.succ(getHomeWork2(fileDto));
     }
 
+    @RequiresAuthentication
     @GetMapping("/getAll")
     public Result getAll(@RequestBody FileDto fileDto) {
 
@@ -134,6 +135,7 @@ public class HomeworkController {
      * @param userId
      * @return
      */
+    @RequiresAuthentication
     @PostMapping("/getByCourseIdList")
     public Result getList(Integer courseId, Integer userId) {
         List<HomeworkScoreVo> listByCourseIdAndUserId = homeworkService.getListByCourseIdAndUserId(courseId, userId);
@@ -147,13 +149,24 @@ public class HomeworkController {
      * @param userId
      * @return
      */
+    @RequiresAuthentication
     @PostMapping("/getByClassIdList")
     public Result getListByClassIdAndUserId(Integer classId, Integer userId) {
         List<HomeworkScoreVo> listByClassIdAndUserId = homeworkService.getListByClassIdAndUserId(classId, userId);
         return Result.succ(construct(listByClassIdAndUserId));
     }
 
+    @RequiresAuthentication
+    @PostMapping("/getByTaskIdList")
+    public Result getListByTaskIdAndUserId(Integer taskId, Integer userId) {
+        List<HomeworkScoreVo> listByTaskIdAndUserId = homeworkService.getListByTaskIdAndUserId(taskId, userId);
+        return Result.succ(construct(listByTaskIdAndUserId));
 
+    }
+
+
+
+    @RequiresAuthentication
     @PostMapping("/getByTeacherIdList")
     public Result getListByTeacherId(Integer teacherId) {
         List<HomeworkTeacherVo> list = homeworkService.getListByTeacherId(teacherId);
@@ -162,6 +175,7 @@ public class HomeworkController {
         return Result.succ(list);
     }
 
+    @RequiresAuthentication
     @PostMapping("/getByTaskId")
     public Result getListByTaskId(Integer taskId) {
 

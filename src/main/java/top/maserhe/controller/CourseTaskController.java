@@ -2,6 +2,7 @@ package top.maserhe.controller;
 
 
 import cn.hutool.core.bean.BeanUtil;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
@@ -38,6 +39,7 @@ public class CourseTaskController {
      * @param courseId
      * @return
      */
+    @RequiresAuthentication
     @GetMapping("/getAll")
     public Result getAllTask(Integer courseId) {
 
@@ -62,6 +64,7 @@ public class CourseTaskController {
      * @param courseTaskDto
      * @return
      */
+    @RequiresAuthentication
     @PostMapping("/addTask")
     public Result addTask(@Validated @RequestBody CourseTaskDto courseTaskDto) {
         Assert.notNull(courseTaskDto, "参数有问题");
@@ -78,6 +81,7 @@ public class CourseTaskController {
      * @param taskId
      * @return
      */
+    @RequiresAuthentication
     @PostMapping("/deleteTask")
     public Result deleteTask(Integer taskId) {
         Assert.notNull(taskId, "作业id不能为空d");
@@ -90,6 +94,7 @@ public class CourseTaskController {
      * @param courseTask
      * @return
      */
+    @RequiresAuthentication
     @PostMapping("/updateTask")
     public Result updateTask(@Validated @RequestBody CourseTask courseTask) {
         Assert.notNull(courseTask, "参数为空");

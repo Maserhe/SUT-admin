@@ -4,6 +4,7 @@ package top.maserhe.controller;
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.additional.update.impl.UpdateChainWrapper;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,6 +44,7 @@ public class TaskGradeController {
      * @param taskGradeDto
      * @return
      */
+    @RequiresAuthentication
     @PostMapping("/mark")
     public Result marking(@RequestBody TaskGradeDto taskGradeDto) {
         TaskGrade taskGrade = new TaskGrade();
@@ -55,6 +57,7 @@ public class TaskGradeController {
      * @param taskGradeDto
      * @return
      */
+    @RequiresAuthentication
     @PostMapping("/isMark")
     public Result isMark(@RequestBody TaskGradeDto taskGradeDto) {
         Map<String, Object> map = new HashMap<>(2);
@@ -69,6 +72,7 @@ public class TaskGradeController {
      * @param
      * @return
      */
+    @RequiresAuthentication
     @PostMapping("/updateScore")
     public Result update(@RequestBody TaskGradeDto taskGradeDto) {
 

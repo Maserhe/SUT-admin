@@ -42,6 +42,15 @@ public interface HomeworkMapper extends BaseMapper<Homework> {
 
 
     /**
+     * 根据 作业id 和 学生id 获取所有
+     * @param taskId
+     * @param userId
+     * @return
+     */
+    public List<HomeworkScoreVo> getListByTaskIdAndUserId(Integer taskId, Integer userId);
+
+
+    /**
      * 根据teacherid 查询所有可以 更改的作业。
      * @param teacherId
      * @return

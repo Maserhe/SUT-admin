@@ -84,7 +84,7 @@ public class AccountController {
      * @return
      */
     @GetMapping("/getUserInfo")
-    public Result getUserByJwt(String token) {
+    public Result getUserByJwt(String token, HttpServletResponse response) {
 
         Date expiration = jwtUtils.getClaimByToken(token).getExpiration();
         if (expiration.before(new Date())) {
@@ -94,6 +94,9 @@ public class AccountController {
         String userId = jwtUtils.getClaimByToken(token).getSubject();
         User user = userService.getById(Long.parseLong(userId));
         Assert.notNull(user, "登陆凭证失效");
+
+        response.setHeader("Authorization", token);
+        response.setHeader("Access-control-Expose-Headers", "Authorization");
         return getVo(user);
     }
 

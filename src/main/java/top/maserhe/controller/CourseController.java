@@ -2,6 +2,7 @@ package top.maserhe.controller;
 
 
 import cn.hutool.core.bean.BeanUtil;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
@@ -46,6 +47,7 @@ public class CourseController {
      * @param classId
      * @return
      */
+    @RequiresAuthentication
     @GetMapping("/getAll")
     public Result getCourse(Integer classId) {
         Assert.notNull(classId, "班级号为空");
@@ -67,6 +69,7 @@ public class CourseController {
      * @param courseDto
      * @return
      */
+    @RequiresAuthentication
     @PostMapping("/add")
     public Result addCourse(@RequestBody @Validated CourseDto courseDto) {
 
@@ -76,7 +79,7 @@ public class CourseController {
         return Result.succ(save);
 
     }
-
+    @RequiresAuthentication
     @PostMapping("/delete")
     public Result deleteCourse(Integer courseId) {
         final boolean res = courseService.deleteCourse(courseId);
@@ -88,6 +91,7 @@ public class CourseController {
      * @param teacherId
      * @return
      */
+    @RequiresAuthentication
     @GetMapping("/getCourses")
     public Result getCourses(Integer teacherId) {
 

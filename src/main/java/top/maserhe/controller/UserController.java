@@ -2,6 +2,7 @@ package top.maserhe.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.csvreader.CsvReader;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
@@ -35,6 +36,7 @@ public class UserController {
     @Autowired
     UserService userService;
 
+    @RequiresAuthentication
     @GetMapping("/{id}")
     public Object test(@PathVariable("id") Long id) {
         return userService.getById(id);
@@ -45,6 +47,7 @@ public class UserController {
      * @param stuDto
      * @return
      */
+    @RequiresAuthentication
     @PostMapping("/addStu")
     public Result addStu(@RequestBody @Validated StuDto stuDto) {
 
@@ -63,6 +66,7 @@ public class UserController {
      * 上传文件 导入用户
      * @return
      */
+    @RequiresAuthentication
     @PostMapping("/upload")
     public Result uploadForAddStu(MultipartFile file, Integer id) {
         Assert.notNull(file, "上传文件不能为空");
@@ -105,6 +109,7 @@ public class UserController {
      * @param classId
      * @return
      */
+    @RequiresAuthentication
     @GetMapping("/getAllStu")
     public Result getStuByClassId(Integer classId) {
 
@@ -114,6 +119,7 @@ public class UserController {
         return Result.succ(users);
     }
 
+    @RequiresAuthentication
     @GetMapping("/delete")
     public Result deleteStu(Integer id) {
 
@@ -147,6 +153,7 @@ public class UserController {
      * @param avatar
      * @return
      */
+    @RequiresAuthentication
     @PostMapping("/changeAvatar")
     public Result changeAvatar(Integer id, String avatar) {
 
@@ -156,6 +163,7 @@ public class UserController {
         return Result.succ(res);
     }
 
+    @RequiresAuthentication
     @PostMapping("/changePass")
     public Result changePass(Integer id, String oldPass, String newPass) {
         User user = userService.getById(id);
@@ -166,7 +174,7 @@ public class UserController {
         }
         return Result.fail("密码错误");
     }
-
+    @RequiresAuthentication
     @PostMapping("/addAdmin")
     public Result addAdmin(@Validated @RequestBody AdminDto adminDto) {
         Assert.notNull(adminDto, "参数错误");

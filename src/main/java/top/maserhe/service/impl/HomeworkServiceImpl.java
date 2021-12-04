@@ -53,9 +53,16 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkMapper, Homework> i
     }
 
     @Override
+    public List<HomeworkScoreVo> getListByTaskIdAndUserId(Integer taskId, Integer userId) {
+        return homeworkMapper.getListByTaskIdAndUserId(taskId, userId);
+    }
+
+    @Override
     public List<HomeworkTeacherVo> getListByTeacherId(Integer teacherId) {
         return homeworkMapper.getListByTeacherId(teacherId);
     }
+
+
 
     /**
      * 删除文件

@@ -30,6 +30,7 @@ import java.io.IOException;
 public class JwtFilter extends AuthenticatingFilter {
     @Autowired
     JwtUtils jwtUtils;
+
     @Override
     protected AuthenticationToken createToken(ServletRequest servletRequest, ServletResponse servletResponse) throws Exception {
         // 获取 token
@@ -70,6 +71,8 @@ public class JwtFilter extends AuthenticatingFilter {
         }
         return false;
     }
+
+
     /**
      * 对跨域提供支持
      */

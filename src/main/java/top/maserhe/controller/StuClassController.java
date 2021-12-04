@@ -2,6 +2,7 @@ package top.maserhe.controller;
 
 
 import cn.hutool.core.map.MapUtil;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -48,6 +49,7 @@ public class StuClassController {
      * 获取所有 班级
      * @return
      */
+    @RequiresAuthentication
     @GetMapping("/getAll")
     public Result getAllClass() {
         List<StuClass> list = stuClassService.list();
@@ -58,6 +60,7 @@ public class StuClassController {
      * 获取所有格式化的 班级序列
      * @return
      */
+    @RequiresAuthentication
     @GetMapping("/getAllFormatClass")
     public Result getAllFormatClass() {
         List<StuClass> list = stuClassService.list();
@@ -75,6 +78,7 @@ public class StuClassController {
      * 删除班级
      * @return
      */
+    @RequiresAuthentication
     @PostMapping("/delete")
     public Result deleteClass(int id) {
 
@@ -97,6 +101,7 @@ public class StuClassController {
      * 添加班级
      * @return
      */
+    @RequiresAuthentication
     @PostMapping("/addClass")
     public Result addClass(@Validated @RequestBody StuClassDTO stuClassDTO) {
 

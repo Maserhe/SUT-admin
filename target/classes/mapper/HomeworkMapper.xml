@@ -27,6 +27,7 @@
 
 
     </select>
+
     <select id="getListByTeacherId" resultType="top.maserhe.common.vo.HomeworkTeacherVo">
         SELECT hl.id,hl.user_id, hl.task_id, hl.task_file, hl.final_score, hl.course_id, hl.task_name, hl.description, hl.view_permission, hl.score_permission, hl.start_time, hl.stop_time, hl.title, hl.img, hl.class_id, sc.major, sc.grade, hl.weight
         FROM
@@ -39,6 +40,18 @@
              WHERE hw.task_id = tl.id) hl,
             stu_class sc
         WHERE hl.class_id = sc.id
+    </select>
+
+    <select id="getListByTaskIdAndUserId" resultType="top.maserhe.common.vo.HomeworkScoreVo">
+        SELECT res.id, res.user_id, res.task_id, res.task_file, res.final_score, res.course_id, res.task_name, res.description, res.view_permission, res.score_permission, res.start_time, res.stop_time, tg.id grade_id, tg.user_id entity_id, tg.comment, tg.score
+        FROM
+            (SELECT hw.id, hw.user_id, hw.task_id, hw.task_file, hw.final_score, ct.course_id, ct.task_name, ct.description, ct.view_permission, ct.score_permission, ct.start_time, ct.stop_time
+             FROM homework hw,
+                  (SELECT * FROM course_task WHERE id = #{taskId} AND view_permission = 1 ) ct
+             WHERE hw.task_id = ct.id) res
+                LEFT JOIN task_grade tg
+                          ON res.id = tg.homework_id and tg.user_id = #{userId}
+
     </select>
 
 
